@@ -19,10 +19,6 @@ import {
 
 import { backgroundShape } from '../images'
 
-
-const numeral = require('numeral');
-numeral.defaultFormat('0');
-
 const styles = theme => ({
   root: {
     flexGrow: 1,
