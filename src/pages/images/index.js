@@ -1,0 +1,1 @@
+export const backgroundShape = require('../../assets/images/shape.svg')
