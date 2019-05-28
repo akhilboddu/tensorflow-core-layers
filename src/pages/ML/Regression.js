@@ -1,7 +1,6 @@
 import React,  { Component } from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
 import { withRouter } from 'react-router-dom'
-import CssBaseline from '@material-ui/core/CssBaseline';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -17,20 +16,11 @@ import {
   Degree3
 } from './coreAPI-ml'
 
-import { backgroundShape } from '../images'
+import BasicSinglePage from '../../components/templates/BasicSinglePage'
+
+const steps = ['Art!','First Degree', 'Second Degree', 'Third Degree'];
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.secondary['A100'],
-    overflow: 'hidden',
-    background: `url(${backgroundShape}) no-repeat`,
-    backgroundSize: 'cover',
-    backgroundPosition: '0 400px',
-    marginTop: 10,
-    padding: 20,
-    paddingBottom: 500
-  },
   grid: {
     margin: `0 ${theme.spacing.unit * 2}px`
   },
@@ -89,13 +79,11 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
   }
 })
-
-const steps = ['Art!','First Degree', 'Second Degree', 'Third Degree'];
-
 class Regression extends Component {
 
   state = {
     activeStep: 0,
+    test: 0,
     receivingAccount: '',
     termsChecked: false,
     loading: true,
@@ -113,6 +101,10 @@ class Regression extends Component {
       
   }
 
+  functest = (result) => {
+    console.log(result)
+  }
+
   renderSketch = () => {
     if(this.state.activeStep === 0) {
         return (
@@ -124,8 +116,9 @@ class Regression extends Component {
                     Hover and drag over the screen below, and watch the magic happen.
                 </Typography>
                 <div className={this.props.classes.stepContainer}>
-                    <P5Wrapper sketch={ArtSketch} test="test"/>
+                    <P5Wrapper sketch={ArtSketch} test={this.state.test} functest={this.functest}/>
                 </div>
+
             </div>
         )
     }
@@ -176,9 +169,6 @@ class Regression extends Component {
     }
   }
 
-  componentDidMount() {
-
-  }
 
 
   render() {
@@ -186,44 +176,42 @@ class Regression extends Component {
     const { activeStep } = this.state;
 
     return (
-      <React.Fragment>
-        <CssBaseline />
-        <div className={classes.root}>
-          <Grid container justify="center">
-            <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-              <Grid item xs={12}>
-                <div className={classes.stepContainer}>
-                    <Typography variant="h3" gutterBottom>
-                        {this.renderTitle()}
-                    </Typography>
+      <BasicSinglePage {...this.props}>
+        <Grid item xs={12}>
+          <button onClick={() => {
+            this.setState((prevState) => {
+              return {test: prevState.test + 10};
+            })
+          } }>increase</button>
+          <div className={this.props.classes.stepContainer}>
+              <Typography variant="h3" gutterBottom>
+                  {this.renderTitle()}
+              </Typography>
+          </div>
+          
+          <div className={classes.stepContainer}>
+            <div className={classes.stepGrid}>
+              <Stepper classes={{root: classes.stepper}} activeStep={activeStep} nonLinear alternativeLabel>
+                {steps.map((label, index) => {
+                  return (
+                    <Step key={index}>
+                      <StepButton onClick={() => this.setState({activeStep: index})}>{label}</StepButton>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+            </div>
+            
+            <div className={classes.smallContainer}>
+              <Paper className={classes.paper}>
+                <div>
+                {this.renderSketch()}
                 </div>
-                
-                <div className={classes.stepContainer}>
-                  <div className={classes.stepGrid}>
-                    <Stepper classes={{root: classes.stepper}} activeStep={activeStep} nonLinear alternativeLabel>
-                      {steps.map((label, index) => {
-                        return (
-                          <Step key={index}>
-                            <StepButton onClick={() => this.setState({activeStep: index})}>{label}</StepButton>
-                          </Step>
-                        );
-                      })}
-                    </Stepper>
-                  </div>
-                  
-                  <div className={classes.smallContainer}>
-                    <Paper className={classes.paper}>
-                      <div>
-                      {this.renderSketch()}
-                      </div>
-                    </Paper>
-                    </div>
-                </div>
-              </Grid>
-            </Grid>
-          </Grid>
-        </div>
-      </React.Fragment>
+              </Paper>
+              </div>
+            </div>
+        </Grid>
+      </BasicSinglePage>
     )
   }
 }
